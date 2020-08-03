@@ -8,9 +8,15 @@ class CommonService extends Service {
     const { appletName, code, encryptedData, iv } = params;
     const { AppID, Secret } = WXCONFIG[appletName];
     const { ctx } = this;
-    const result = await ctx.curl('https://api.weixin.qq.com/sns/jscode2session?appid=' + AppID + '&secret=' + Secret + '&js_code=' + code + '&grant_type=authorization_code', {
-      dataType: 'json',
-    });
+    let result;
+    try {
+      result = await ctx.curl('https://api.weixin.qq.com/sns/jscode2session?appid=' + AppID + '&secret=' + Secret + '&js_code=' + code + '&grant_type=authorization_code', {
+        dataType: 'json',
+      });
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
     const res = await this.ctx.service.base.WxCryptoInfo(AppID, result.data.session_key).decryptData(encryptedData, iv);
     return ({
       code: 200,

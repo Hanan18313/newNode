@@ -36,7 +36,7 @@ module.exports = appInfo => {
   // 静态文件
   config.static = {
     prefix: '/',
-    dirs: [{ prefix: '/home' }],
+    dir: path.join(appInfo.baseDir, 'app/public'),
     dynamic: true,
     preload: true,
     buffer: false,
