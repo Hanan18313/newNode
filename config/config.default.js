@@ -32,11 +32,10 @@ module.exports = appInfo => {
     allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
   };
 
-  console.log(path.join(appInfo.baseDir, 'app/public/dist'));
   // 静态文件
   config.static = {
     prefix: '/',
-    dir: path.join(appInfo.baseDir, 'app/public'),
+    dir: [ path.join(appInfo.baseDir, '/public') ],
     dynamic: true,
     preload: true,
     buffer: false,
@@ -57,13 +56,24 @@ module.exports = appInfo => {
     dialectOptions: {
       charset: 'utf8',
     },
-    host: 'www.langjie.com',
+    host: '116.62.14.243',
     username: 'root',
     password: '123456',
     port: '33060',
     database: 'lj_mp',
     timezone: '+08:00',
   };
+  // config.mysql = {
+  //   client: {
+  //     host: '116.62.14.243',
+  //     port: '33060',
+  //     user: 'root',
+  //     password: '123456',
+  //     database: 'lj_mp',
+  //   },
+  //   app: true,
+  //   agent: false,
+  // };
 
   // onerror
   config.onerror = {
@@ -75,6 +85,10 @@ module.exports = appInfo => {
       ctx.body = '<h3>error</h3>';
       ctx.status = 500;
     },
+  };
+  config.logger = {
+    disableConsoleAfterReady: true,
+    consoleLevel: 'DEBUG',
   };
 
   // add your user config here

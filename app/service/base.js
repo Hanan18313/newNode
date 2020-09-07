@@ -1,6 +1,7 @@
 'use strict';
 const crypto = require('crypto');
 
+
 const Service = require('egg').Service;
 
 class BaseService extends Service {
@@ -30,6 +31,7 @@ class BaseService extends Service {
     };
     return new WXBizDataCrypt(appId, sessionKey);
   }
+
 }
 
 module.exports = BaseService;
