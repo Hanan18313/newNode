@@ -1,12 +1,12 @@
 'use strict';
 
 const Service = require('egg').Service;
-const WXCONFIG = require('../../config/config.wx.js');
+const WX_CONFIG = require('../../config/config.wx.js');
 
 class CommonService extends Service {
   async getUnionIdByCode(params) {
     const { appletName, code, encryptedData, iv } = params;
-    const { AppID, Secret } = WXCONFIG.WxConfig[appletName];
+    const { AppID, Secret } = WX_CONFIG.WxConfig[appletName];
     const { ctx } = this;
     let result;
     try {
@@ -14,7 +14,7 @@ class CommonService extends Service {
         dataType: 'json',
       });
     } catch (error) {
-      return error;
+      this.logger.error(error);
     }
     const res = await this.ctx.service.base.WxCryptoInfo(AppID, result.data.session_key).decryptData(encryptedData, iv);
     return ({
@@ -24,15 +24,15 @@ class CommonService extends Service {
     });
   }
   async getAccessToken() {
-    const getAccessTokenUrl = WXCONFIG.WxConfig.getAccessTokenUrl;
+    const proxy_domain = WX_CONFIG.WxConfig.proxy_domain;
     let accessToken;
     try {
-      accessToken = await this.ctx.curl(getAccessTokenUrl, {
+      accessToken = await this.ctx.curl(proxy_domain + '/wx/getToken', {
         dataType: 'json',
       });
       accessToken = typeof accessToken.data === 'object' ? accessToken.data : JSON.parse(accessToken.data);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
     }
     return ({
       code: 200,
@@ -42,8 +42,8 @@ class CommonService extends Service {
   }
 
   async getAppletAccessToken() {
-    const APPID = WXCONFIG.WxConfig.JN_signIn.AppID;
-    const APPSECRET = WXCONFIG.WxConfig.JN_signIn.Secret;
+    const APPID = WX_CONFIG.WxConfig.JN_signIn.AppID;
+    const APPSECRET = WX_CONFIG.WxConfig.JN_signIn.Secret;
     const APPLET_ACCESS_TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' + APPID + '&secret=' + APPSECRET;
     let appletAccessToken;
     try {
@@ -52,7 +52,7 @@ class CommonService extends Service {
       });
       appletAccessToken = typeof appletAccessToken.data === 'object' ? appletAccessToken.data : JSON.parse(appletAccessToken.data);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
     }
     return ({
       code: 200,

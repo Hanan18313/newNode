@@ -5,4 +5,5 @@
  */
 module.exports = app => {
   require('./router/common')(app);
+  require('./router/jnShow')(app);
 };

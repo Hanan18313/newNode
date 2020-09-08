@@ -3,7 +3,7 @@
 module.exports = app => {
   const { STRING, DATE, INTEGER } = app.Sequelize;
   const User = app.model.define('all_user', {
-    id: { type: INTEGER, primaryKey: true, autoIncrement: true },
+    id: { type: INTEGER(11), primaryKey: true, autoIncrement: true },
     user_name: STRING,
     phone: STRING,
     company: STRING,
@@ -11,16 +11,30 @@ module.exports = app => {
     openid: STRING,
     avatar: STRING,
     address: STRING,
-    first_log_time: DATE,
-    latest_log_time: DATE,
-    status: INTEGER(1),
-    attend_type: STRING,
-    is_eat: INTEGER(1),
+    status: {
+      type: INTEGER(1),
+      defaultValue: 0,
+    },
+    attend_type: {
+      type: STRING,
+      defaultValue: 'live',
+    },
+    is_eat: {
+      type: INTEGER(1),
+      defaultValue: 0,
+    },
     lottery_number: INTEGER(11),
-    is_check: INTEGER(1),
+    is_win: INTEGER(1),
+    is_check: {
+      type: INTEGER(1),
+      defaultValue: 0,
+    },
     sign_up_time: DATE,
     sign_in_time: DATE,
-    active_id: INTEGER(11),
+    active_id: {
+      type: INTEGER(11),
+      defaultValue: 1,
+    },
   });
   return User;
 };

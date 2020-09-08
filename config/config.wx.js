@@ -1,7 +1,7 @@
 'use strict';
 
 const WxConfig = {
-  getAccessTokenUrl: 'https://www.langjie.com/wx/getToken',
+  proxy_domain: 'https://wx.langjie.com',
   devWxApplet: {
     AppID: 'wx8ec0c1176c62003e',
     Secret: '75c674b7aba0c3313ebcc65369813992',

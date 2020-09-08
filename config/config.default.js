@@ -49,31 +49,36 @@ module.exports = appInfo => {
       hostname: '192.168.50.80',
     },
   };
+  // config.mysql = {
+  //   client: {
+  //     host: '116.62.14.243',
+  //     user: 'root',
+  //     password: '123456',
+  //     port: '33060',
+  //     database: 'lj_mp',
+  //     timezone: '+08:00',
+  //   },
+  // };
 
-  // mysql
   config.sequelize = {
     dialect: 'mysql',
     dialectOptions: {
       charset: 'utf8',
     },
     host: '116.62.14.243',
-    username: 'root',
+    user: 'root',
     password: '123456',
     port: '33060',
     database: 'lj_mp',
     timezone: '+08:00',
+    define: {
+      raw: true,
+      underscored: true,
+      freezeTableName: true,
+      timestamps: false,
+    },
+
   };
-  // config.mysql = {
-  //   client: {
-  //     host: '116.62.14.243',
-  //     port: '33060',
-  //     user: 'root',
-  //     password: '123456',
-  //     database: 'lj_mp',
-  //   },
-  //   app: true,
-  //   agent: false,
-  // };
 
   // onerror
   config.onerror = {
