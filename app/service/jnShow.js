@@ -4,6 +4,8 @@ const Service = require('egg').Service;
 const WX_CONFIG = require('../../config/config.wx');
 
 class JnShowService extends Service {
+
+  // 用户信息
   async createUserInfo(params) {
     const { unionId, avatarUrl, openId } = params;
     let memberInfo;
@@ -14,12 +16,7 @@ class JnShowService extends Service {
     } catch (error) {
       this.logger.error(error);
     }
-    const findUser = await this.ctx.model.User.findOne({
-      where: {
-        unionid: unionId,
-      },
-    });
-
+    const findUser = await this.ctx.model.User.findOne({ where: { unionid: unionId } });
     const data = memberInfo.data.data;
     if (memberInfo.data.code === 200) { // 是会员
       if (!findUser) { // 不存在
@@ -31,8 +28,7 @@ class JnShowService extends Service {
           address: data.addr,
           company: data.company,
           phone: data.phone,
-          sign_up_time: new Date(),
-          is_check: data.is_check,
+          is_check: 1,
         });
         return ({
           code: 200,
@@ -59,7 +55,6 @@ class JnShowService extends Service {
         unionid: unionId,
         openid: openId,
         avatar: avatarUrl,
-        sign_up_time: new Date(),
       });
       return ({
         code: 200,
@@ -73,15 +68,80 @@ class JnShowService extends Service {
     });
   }
 
-  async getMemberInfo(params) {
+  // 报名
+  async signUp(params) {
     const { unionId } = params;
-    const memberInfo = await this.ctx.model.User.findOne({
-      where: {
-        unionid: unionId,
-      },
-    });
-    console.log(memberInfo);
+    const memberInfo = await this.ctx.service.common.getMemberInfo({ unionId });
+    const existUserInfo = await this.ctx.model.User.findOne({ where: { unionid: unionId } });
+    if (memberInfo.data.code === 200) {
+      if (memberInfo.data.data.checked === 1) {
+        if (existUserInfo.dataValues.is_check === 1) {
+          const updateSignUpInfo = await this.ctx.model.User.update({ status: 1, sign_up_time: new Date() }, {
+            where: { unionid: unionId },
+          });
+          return ({
+            code: 200,
+            msg: '报名成功',
+            data: updateSignUpInfo,
+          });
+        }
+        const updateSignUpInfo = await this.ctx.model.User.update({
+          status: 1,
+          is_check: 1,
+          user_name: memberInfo.data.data.name,
+          company: memberInfo.data.data.company,
+          phone: memberInfo.data.data.phone,
+          address: memberInfo.data.data.addr,
+          sign_up_time: new Date(),
+        }, { where: { unionid: unionId } });
+        return ({
+          code: 200,
+          msg: '（新）报名成功',
+          data: updateSignUpInfo,
+        });
+      }
+      return ({
+        code: -20002,
+        msg: '未通过或进行会员认证',
+        data: [],
+      });
+    }
+    return (memberInfo.data);
   }
+
+  // 午宴
+  async attendLunch(params) {
+    const { unionId, val } = params;
+    await this.ctx.model.User.update({ is_eat: val }, { where: { unionid: unionId } });
+    return ({
+      code: 200,
+      msg: '是否午宴',
+      data: [],
+    });
+  }
+  async changeActiveStatus() {
+    const activeStatus = await this.ctx.model.ActiveInfo.findOne({ where: { id: 1 } });
+    if (activeStatus.dataValues.active_status === '未开始') {
+      await this.ctx.model.ActiveInfo.update({ active_status: '进行中' }, { where: { id: 1 } });
+      await this.ctx.model.User.update({ status: '待签到' }, { where: { status: '待开幕' } });
+      return ({
+        code: 200,
+        msg: '展会进行中',
+      });
+    } else if (activeStatus.dataValues.active_status === '进行中') {
+      await this.ctx.model.ActiveInfo.update({ active_status: '已结束' }, { where: { id: 1 } });
+      await this.ctx.model.User.update({ status: '已结束' });
+      return ({
+        code: 200,
+        msg: '展会已结束',
+      });
+    }
+  }
+
+  /**
+   * 奖品
+   */
+
 }
 
 module.exports = JnShowService;

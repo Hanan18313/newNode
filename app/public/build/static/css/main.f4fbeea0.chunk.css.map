@@ -1,1 +1,0 @@
-{"version":3,"sources":["Layout.css"],"names":[],"mappings":"AAAA,yCACI,WAAY,CACZ,WAAY,CACZ,6BAAoC,CACpC,uBAAwB,CACxB,UACF","file":"main.f4fbeea0.chunk.css","sourcesContent":["#components-layout-demo-top-side-2 .logo {\r\n    width: 120px;\r\n    height: 31px;\r\n    background: rgba(255, 255, 255, 0.2);\r\n    margin: 16px 28px 16px 0;\r\n    float: left;\r\n  }"]}

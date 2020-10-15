@@ -60,6 +60,19 @@ class CommonService extends Service {
       data: appletAccessToken,
     });
   }
+
+  async getMemberInfo(params) {
+    const { unionId } = params;
+    let memberInfo;
+    try {
+      memberInfo = this.ctx.curl(WX_CONFIG.WxConfig.proxy_domain + '/api/getMemberInfo/' + unionId, {
+        dataType: 'json',
+      });
+    } catch (error) {
+      this.logger.error(error);
+    }
+    return memberInfo;
+  }
 }
 
 module.exports = CommonService;
